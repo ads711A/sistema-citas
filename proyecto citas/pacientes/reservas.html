@@ -23,57 +23,7 @@
 </head>
 
 <body>
-    <?php
-
-    //learn from w3schools.com
-
-    session_start();
-
-    if (isset($_SESSION["user"])) {
-        if (($_SESSION["user"]) == "" or $_SESSION['usertype'] != 'p') {
-            header("location: ../login.php");
-        } else {
-            $useremail = $_SESSION["user"];
-        }
-    } else {
-        header("location: ../login.php");
-    }
-
-
-    //import database
-    include("../connection.php");
-    $userrow = $database->query("select * from patient where pemail='$useremail'");
-    $userfetch = $userrow->fetch_assoc();
-    $userid = $userfetch["pid"];
-    $username = $userfetch["pname"];
-
-
-    //echo $userid;
-    //echo $username;
-
-
-    $sqlmain = "select appointment.appoid,schedule.scheduleid,schedule.title,doctor.docname,patient.pname,schedule.scheduledate,schedule.scheduletime,appointment.apponum,appointment.appodate from schedule inner join appointment on schedule.scheduleid=appointment.scheduleid inner join patient on patient.pid=appointment.pid inner join doctor on schedule.docid=doctor.docid  where  patient.pid=$userid ";
-
-    if ($_POST) {
-        //print_r($_POST);
-
-
-
-
-        if (!empty($_POST["sheduledate"])) {
-            $sheduledate = $_POST["sheduledate"];
-            $sqlmain .= " and schedule.scheduledate='$sheduledate' ";
-        };
-
-
-
-        //echo $sqlmain;
-
-    }
-
-    $sqlmain .= "order by appointment.appodate  asc";
-    $result = $database->query($sqlmain);
-    ?>
+   
     <div class="container">
         <div class="menu">
             <table class="menu-container" border="0">
@@ -99,7 +49,7 @@
                 </tr>
                 <tr class="menu-row">
                     <td class="menu-btn menu-icon-home">
-                        <a href="index.php" class="non-style-link-menu ">
+                        <a href="index.html" class="non-style-link-menu ">
                             <div>
                                 <p class="menu-text">Inicio</p>
                         </a>
@@ -108,7 +58,7 @@
         </tr>
         <tr class="menu-row">
             <td class="menu-btn menu-icon-doctor">
-                <a href="doctors.php" class="non-style-link-menu">
+                <a href="doctores.html" class="non-style-link-menu">
                     <div>
                         <p class="menu-text">Doctores</p>
                 </a>
@@ -118,7 +68,7 @@
 
     <tr class="menu-row">
         <td class="menu-btn menu-icon-session">
-            <a href="schedule.php" class="non-style-link-menu">
+            <a href="citas.html" class="non-style-link-menu">
                 <div>
                     <p class="menu-text">Citas</p>
                 </div>
@@ -127,7 +77,7 @@
     </tr>
     <tr class="menu-row">
         <td class="menu-btn menu-icon-appoinment  menu-active menu-icon-appoinment-active">
-            <a href="appointment.php" class="non-style-link-menu non-style-link-menu-active">
+            <a href="reservas.html" class="non-style-link-menu non-style-link-menu-active">
                 <div>
                     <p class="menu-text">Mis Reservas</p>
             </a></div>
@@ -135,7 +85,7 @@
     </tr>
     <tr class="menu-row">
         <td class="menu-btn menu-icon-settings">
-            <a href="settings.php" class="non-style-link-menu">
+            <a href="configuracion.html" class="non-style-link-menu">
                 <div>
                     <p class="menu-text">Configuración</p>
             </a></div>
@@ -161,15 +111,7 @@
                         Fecha
                     </p>
                     <p class="heading-sub12" style="padding: 0;margin: 0;">
-                        <?php
-
-                        date_default_timezone_set('America/Bogota');
-
-                        $today = date('Y-m-d');
-                        echo $today;
-
-
-                        ?>
+                       
                     </p>
                 </td>
                 <td width="10%">
@@ -191,7 +133,7 @@
             <tr>
                 <td colspan="4" style="padding-top:10px;width: 100%;">
 
-                    <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)">Mis Reservas (<?php echo $result->num_rows; ?>)</p>
+                    <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)">Mis Reservas ()</p>
                 </td>
 
             </tr>
@@ -236,13 +178,7 @@
 
                                 <tbody>
 
-                                    <?php
-
-
-
-
-                                    if ($result->num_rows == 0) {
-                                        echo '<tr>
+                                   <tr>
                                     <td colspan="7">
                                     <br><br><br><br>
                                     <center>
@@ -255,104 +191,37 @@
                                     </center>
                                     <br><br><br><br>
                                     </td>
-                                    </tr>';
-                                    } else {
-
-                                        for ($x = 0; $x < ($result->num_rows); $x++) {
-                                            echo "<tr>";
-                                            for ($q = 0; $q < 3; $q++) {
-                                                $row = $result->fetch_assoc();
-                                                $scheduleid = isset($row["scheduleid"]) ? $row["scheduleid"] : '';
-                                                $title = isset($row["title"]) ? $row["title"] : '';
-                                                $docname = isset($row["docname"]) ? $row["docname"] : '';
-                                                $scheduledate = isset($row["scheduledate"]) ? $row["scheduledate"] : '';
-                                                $scheduletime = isset($row["scheduletime"]) ? $row["scheduletime"] : '';
-                                                $apponum = isset($row["apponum"]) ? $row["apponum"] : '';
-                                                $appodate = isset($row["appodate"]) ? $row["appodate"] : '';
-                                                $appoid = isset($row["appoid"]) ? $row["appoid"] : '';
-
-                                                if ($scheduleid == "") {
-                                                    break;
-                                                }
-
-                                                echo '
+                                    </tr>
+                                   
                                             <td style="width: 25%;">
                                                     <div  class="dashboard-items search-items"  >
                                                     
                                                         <div style="width:100%;">
                                                         <div class="h3-search">
-                                                                    Fecha de Reserva: ' . substr($appodate, 0, 30) . '<br>
-                                                                    Número de Reserva: OC-000-' . $appoid . '
+                                                                    Fecha de Reserva: ''<br>
+                                                                    Número de Reserva: OC-000-''
                                                                 </div>
                                                                 <div class="h1-search">
-                                                                    ' . substr($title, 0, 21) . '<br>
+                                                                   <br>
                                                                 </div>
                                                                 <div class="h3-search">
-                                                                    Número de Reserva:<div class="h1-search">0' . $apponum . '</div>
+                                                                    Número de Reserva:<div class="h1-search">0</div>
                                                                 </div>
                                                                 <div class="h3-search">
-                                                                    ' . substr($docname, 0, 30) . '
+                                                                    
                                                                 </div>
                                                                 
                                                                 
                                                                 <div class="h4-search">
-                                                                    Fecha Reserva: ' . $scheduledate . '<br>Inicio: <b>@' . substr($scheduletime, 0, 5) . '</b> (24h)
+                                                                    Fecha Reserva: ' '<br>Inicio: <b></b> (24h)
                                                                 </div>
                                                                 <br>
                                                                 <a href="?action=drop&id=' . $appoid . '&title=' . $title . '&doc=' . $docname . '" ><button  class="login-btn btn-primary-soft btn "  style="padding-top:11px;padding-bottom:11px;width:100%"><font class="tn-in-text">Cancelar Reserva</font></button></a>
                                                         </div>
                                                                 
                                                     </div>
-                                                </td>';
-                                            }
-                                            echo "</tr>";
-
-                                            // for ( $x=0; $x<$result->num_rows;$x++){
-                                            //     $row=$result->fetch_assoc();
-                                            //     $appoid=$row["appoid"];
-                                            //     $scheduleid=$row["scheduleid"];
-                                            //     $title=$row["title"];
-                                            //     $docname=$row["docname"];
-                                            //     $scheduledate=$row["scheduledate"];
-                                            //     $scheduletime=$row["scheduletime"];
-                                            //     $pname=$row["pname"];
-                                            //     
-                                            //     
-                                            //     echo '<tr >
-                                            //         <td style="font-weight:600;"> &nbsp;'.
-
-                                            //         substr($pname,0,25)
-                                            //         .'</td >
-                                            //         <td style="text-align:center;font-size:23px;font-weight:500; color: var(--btnnicetext);">
-                                            //         '.$apponum.'
-
-                                            //         </td>
-                                            //         <td>
-                                            //         '.substr($title,0,15).'
-                                            //         </td>
-                                            //         <td style="text-align:center;;">
-                                            //             '.substr($scheduledate,0,10).' @'.substr($scheduletime,0,5).'
-                                            //         </td>
-
-                                            //         <td style="text-align:center;">
-                                            //             '.$appodate.'
-                                            //         </td>
-
-                                            //         <td>
-                                            //         <div style="display:flex;justify-content: center;">
-
-                                            //         <!--<a href="?action=view&id='.$appoid.'" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-view"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">Ver</font></button></a>
-                                            //        &nbsp;&nbsp;&nbsp;-->
-                                            //        <a href="?action=drop&id='.$appoid.'&name='.$pname.'&session='.$title.'&apponum='.$apponum.'" class="non-style-link"><button  class="btn-primary-soft btn button-icon btn-delete"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">Cancelar</font></button></a>
-                                            //        &nbsp;&nbsp;&nbsp;</div>
-                                            //         </td>
-                                            //     </tr>';
-
-                                        }
-                                    }
-
-                                    ?>
-
+                                                </td>
+                                            
                                 </tbody>
 
                             </table>
@@ -366,22 +235,15 @@
         </table>
     </div>
     </div>
-    <?php
-
-    if ($_GET) {
-        $id = $_GET["id"];
-        $action = $_GET["action"];
-        if ($action == 'booking-added') {
-
-            echo '
-            <div id="popup1" class="overlay">
+            <!-- MODEL RESERVA EXITOSA -->
+            <!-- <div id="popup1" class="overlay">
                     <div class="popup">
                     <center>
                     <br><br>
                         <h2>Reserva realizada con éxito.</h2>
                         <a class="close" href="appointment.php">&times;</a>
                         <div class="content">
-                        Tu número de cita es ' . $id . '.<br><br>
+                        Tu número de cita es 'AQUI'.<br><br>
                             
                         </div>
                         <div style="display: flex;justify-content: center;">
@@ -391,22 +253,19 @@
                         </div>
                     </center>
             </div>
-            </div>
-            ';
-        } elseif ($action == 'drop') {
-            $title = $_GET["title"];
-            $docname = $_GET["doc"];
+            </div> -->
+          
 
-            echo '
-            <div id="popup1" class="overlay">
+            <!-- MODEL ELIMINAR CITA -->
+            <!-- <div id="popup1" class="overlay">
                     <div class="popup">
                     <center>
                         <h2>Estás segur@?</h2>
                         <a class="close" href="appointment.php">&times;</a>
                         <div class="content">
                             Deseas cancelar esta cita?<br><br>
-                            Nombre de Cita: &nbsp;<b>' . substr($title, 0, 40) . '</b><br>
-                            Nombre Doctor&nbsp; : <b>' . substr($docname, 0, 40) . '</b><br><br>
+                            Nombre de Cita: &nbsp;<b>AQUI</b><br>
+                            Nombre Doctor&nbsp; : <b>AQUI</b><br><br>
                             
                         </div>
                         <div style="display: flex;justify-content: center;">
@@ -416,23 +275,11 @@
                         </div>
                     </center>
             </div>
-            </div>
-            ';
-        } elseif ($action == 'view') {
-            $sqlmain = "select * from doctor where docid='$id'";
-            $result = $database->query($sqlmain);
-            $row = $result->fetch_assoc();
-            $name = $row["docname"];
-            $email = $row["docemail"];
-            $spe = $row["specialties"];
+            </div> -->
+           
 
-            $spcil_res = $database->query("select sname from specialties where id='$spe'");
-            $spcil_array = $spcil_res->fetch_assoc();
-            $spcil_name = $spcil_array["sname"];
-            $nic = $row['docnic'];
-            $tele = $row['doctel'];
-            echo '
-            <div id="popup1" class="overlay">
+            <!-- MODEL VER DETALLES -->
+            <!-- <div id="popup1" class="overlay">
                     <div class="popup">
                     <center>
                         <h2></h2>
@@ -458,7 +305,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                    ' . $name . '<br><br>
+                                   <br><br>
                                 </td>
                                 
                             </tr>
@@ -469,7 +316,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                ' . $email . '<br><br>
+                                <br><br>
                                 </td>
                             </tr>
                             <tr>
@@ -479,7 +326,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                ' . $nic . '<br><br>
+                                <br><br>
                                 </td>
                             </tr>
                             <tr>
@@ -489,7 +336,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                ' . $tele . '<br><br>
+                               <br><br>
                                 </td>
                             </tr>
                             <tr>
@@ -500,7 +347,7 @@
                             </tr>
                             <tr>
                             <td class="label-td" colspan="2">
-                            ' . $spcil_name . '<br><br>
+                            <br><br>
                             </td>
                             </tr>
                             <tr>
@@ -518,12 +365,8 @@
                     </center>
                     <br><br>
             </div>
-            </div>
-            ';
-        }
-    }
-
-    ?>
+            </div> -->
+         
     </div>
 
 </body>

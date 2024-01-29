@@ -23,31 +23,7 @@
 </head>
 
 <body>
-    <?php
-
-    //learn from w3schools.com
-
-    session_start();
-
-    if (isset($_SESSION["user"])) {
-        if (($_SESSION["user"]) == "" or $_SESSION['usertype'] != 'p') {
-            header("location: ../login.php");
-        } else {
-            $useremail = $_SESSION["user"];
-        }
-    } else {
-        header("location: ../login.php");
-    }
-
-
-    //import database
-    include("../connection.php");
-    $userrow = $database->query("select * from patient where pemail='$useremail'");
-    $userfetch = $userrow->fetch_assoc();
-    $userid = $userfetch["pid"];
-    $username = $userfetch["pname"];
-
-    ?>
+    
     <div class="container">
         <div class="menu">
             <table class="menu-container" border="0">
@@ -74,7 +50,7 @@
                 </tr>
                 <tr class="menu-row">
                     <td class="menu-btn menu-icon-home ">
-                        <a href="index.php" class="non-style-link-menu ">
+                        <a href="index.html" class="non-style-link-menu ">
                             <div>
                                 <p class="menu-text">Inicio</p>
                         </a>
@@ -83,7 +59,7 @@
         </tr>
         <tr class="menu-row">
             <td class="menu-btn menu-icon-doctor menu-active menu-icon-doctor-active">
-                <a href="doctors.php" class="non-style-link-menu non-style-link-menu-active">
+                <a href="doctores.html" class="non-style-link-menu non-style-link-menu-active">
                     <div>
                         <p class="menu-text">Doctores</p>
                 </a>
@@ -93,7 +69,7 @@
 
     <tr class="menu-row">
         <td class="menu-btn menu-icon-session">
-            <a href="schedule.php" class="non-style-link-menu">
+            <a href="citas.html" class="non-style-link-menu">
                 <div>
                     <p class="menu-text">Citas</p>
                 </div>
@@ -102,7 +78,7 @@
     </tr>
     <tr class="menu-row">
         <td class="menu-btn menu-icon-appoinment">
-            <a href="appointment.php" class="non-style-link-menu">
+            <a href="reservas.html" class="non-style-link-menu">
                 <div>
                     <p class="menu-text">Mis Reservas</p>
             </a></div>
@@ -110,7 +86,7 @@
     </tr>
     <tr class="menu-row">
         <td class="menu-btn menu-icon-settings">
-            <a href="settings.php" class="non-style-link-menu">
+            <a href="configuracion.html" class="non-style-link-menu">
                 <div>
                     <p class="menu-text">Configuración</p>
             </a></div>
@@ -133,20 +109,7 @@
 
                         <input type="search" name="search" class="input-text header-searchbar" placeholder="Buscar nombre del doctor o correo electrónico" list="doctors">&nbsp;&nbsp;
 
-                        <?php
-                        echo '<datalist id="doctors">';
-                        $list11 = $database->query("select  docname,docemail from  doctor;");
-
-                        for ($y = 0; $y < $list11->num_rows; $y++) {
-                            $row00 = $list11->fetch_assoc();
-                            $d = $row00["docname"];
-                            $c = $row00["docemail"];
-                            echo "<option value='$d'><br/>";
-                            echo "<option value='$c'><br/>";
-                        };
-
-                        echo ' </datalist>';
-                        ?>
+                       
 
 
                         <input type="Submit" value="Búsqueda" class="login-btn btn-primary btn" style="padding-left: 25px;padding-right: 25px;padding-top: 10px;padding-bottom: 10px;">
@@ -159,12 +122,7 @@
                         Fecha
                     </p>
                     <p class="heading-sub12" style="padding: 0;margin: 0;">
-                        <?php
-                        date_default_timezone_set('America/Bogota');
-
-                        $date = date('Y-m-d');
-                        echo $date;
-                        ?>
+                      
                     </p>
                 </td>
                 <td width="10%">
@@ -177,22 +135,11 @@
 
             <tr>
                 <td colspan="4" style="padding-top:10px;">
-                    <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)">Doctores (<?php echo $list11->num_rows; ?>)</p>
+                    <p class="heading-main12" style="margin-left: 45px;font-size:18px;color:rgb(49, 49, 49)">Doctores ()</p>
                 </td>
 
             </tr>
-            <?php
-            if ($_POST) {
-                $keyword = $_POST["search"];
-
-                $sqlmain = "select * from doctor where docemail='$keyword' or docname='$keyword' or docname like '$keyword%' or docname like '%$keyword' or docname like '%$keyword%'";
-            } else {
-                $sqlmain = "select * from doctor order by docid desc";
-            }
-
-
-
-            ?>
+          
 
             <tr>
                 <td colspan="4">
@@ -223,13 +170,7 @@
                                 </thead>
                                 <tbody>
 
-                                    <?php
-
-
-                                    $result = $database->query($sqlmain);
-
-                                    if ($result->num_rows == 0) {
-                                        echo '<tr>
+                                   <tr>
                                     <td colspan="4">
                                     <br><br><br><br>
                                     <center>
@@ -243,25 +184,13 @@
                                     <br><br><br><br>
                                     </td>
                                     </tr>';
-                                    } else {
-                                        for ($x = 0; $x < $result->num_rows; $x++) {
-                                            $row = $result->fetch_assoc();
-                                            $docid = $row["docid"];
-                                            $name = $row["docname"];
-                                            $email = $row["docemail"];
-                                            $spe = $row["specialties"];
-                                            $spcil_res = $database->query("select sname from specialties where id='$spe'");
-                                            $spcil_array = $spcil_res->fetch_assoc();
-                                            $spcil_name = $spcil_array["sname"];
-                                            echo '<tr>
-                                        <td> &nbsp;' .
-                                                substr($name, 0, 30)
-                                                . '</td>
+                                   <tr>
+                                        <td> &nbsp;</td>
                                         <td>
-                                        ' . substr($email, 0, 20) . '
+                                       
                                         </td>
                                         <td>
-                                            ' . substr($spcil_name, 0, 20) . '
+                                         
                                         </td>
 
                                         <td>
@@ -272,12 +201,7 @@
                                        <a href="?action=session&id=' . $docid . '&name=' . $name . '"  class="non-style-link"><button  class="btn-primary-soft btn button-icon menu-icon-session-active"  style="padding-left: 40px;padding-top: 12px;padding-bottom: 12px;margin-top: 10px;"><font class="tn-in-text">Citas</font></button></a>
                                         </div>
                                         </td>
-                                    </tr>';
-                                        }
-                                    }
-
-                                    ?>
-
+                                    </tr>
                                 </tbody>
 
                             </table>
@@ -291,15 +215,8 @@
         </table>
     </div>
     </div>
-    <?php
-    if ($_GET) {
-
-        $id = $_GET["id"];
-        $action = $_GET["action"];
-        if ($action == 'drop') {
-            $nameget = $_GET["name"];
-            echo '
-            <div id="popup1" class="overlay">
+            <!-- MODAL DE BORRAR REGISTRO -->
+            <!-- <div id="popup1" class="overlay">
                     <div class="popup">
                     <center>
                         <h2>Estás segur@?</h2>
@@ -315,23 +232,11 @@
                         </div>
                     </center>
             </div>
-            </div>
-            ';
-        } elseif ($action == 'view') {
-            $sqlmain = "select * from doctor where docid='$id'";
-            $result = $database->query($sqlmain);
-            $row = $result->fetch_assoc();
-            $name = $row["docname"];
-            $email = $row["docemail"];
-            $spe = $row["specialties"];
+            </div> -->
+          
 
-            $spcil_res = $database->query("select sname from specialties where id='$spe'");
-            $spcil_array = $spcil_res->fetch_assoc();
-            $spcil_name = $spcil_array["sname"];
-            $nic = $row['docnic'];
-            $tele = $row['doctel'];
-            echo '
-            <div id="popup1" class="overlay">
+            <!-- MODAL DE VER DETALLE DEL DOCTOR -->
+            <!-- <div id="popup1" class="overlay">
                     <div class="popup">
                     <center>
                         <h2></h2>
@@ -357,7 +262,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                    ' . $name . '<br><br>
+                                  <br><br>
                                 </td>
                                 
                             </tr>
@@ -368,7 +273,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                ' . $email . '<br><br>
+                                <br><br>
                                 </td>
                             </tr>
                             <tr>
@@ -378,7 +283,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                ' . $nic . '<br><br>
+                               <br><br>
                                 </td>
                             </tr>
                             <tr>
@@ -388,7 +293,7 @@
                             </tr>
                             <tr>
                                 <td class="label-td" colspan="2">
-                                ' . $tele . '<br><br>
+                                <br><br>
                                 </td>
                             </tr>
                             <tr>
@@ -399,12 +304,12 @@
                             </tr>
                             <tr>
                             <td class="label-td" colspan="2">
-                            ' . $spcil_name . '<br><br>
+                            <br><br>
                             </td>
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <a href="doctors.php"><input type="button" value="OK" class="login-btn btn-primary-soft btn" ></a>
+                                    <a href="doctores.html"><input type="button" value="OK" class="login-btn btn-primary-soft btn" ></a>
                                 
                                     
                                 </td>
@@ -417,12 +322,15 @@
                     </center>
                     <br><br>
             </div>
-            </div>
-            ';
-        } elseif ($action == 'session') {
-            $name = $_GET["name"];
-            echo '
-            <div id="popup1" class="overlay">
+            </div> -->
+
+
+
+
+
+            
+            <!-- MODAL DE REDIRECCIONAR CITA -->
+            <!-- <div id="popup1" class="overlay">
                     <div class="popup">
                     <center>
                         <h2>¿Redireccionar a las Citas de este Doctor?</h2>
@@ -444,52 +352,26 @@
                         </div>
                     </center>
             </div>
-            </div>
-            ';
-        }
-    } elseif ($action == 'edit') {
-        $sqlmain = "select * from doctor where docid='$id'";
-        $result = $database->query($sqlmain);
-        $row = $result->fetch_assoc();
-        $name = $row["docname"];
-        $email = $row["docemail"];
-        $spe = $row["specialties"];
+            </div>  -->
+         
 
-        $spcil_res = $database->query("select sname from specialties where id='$spe'");
-        $spcil_array = $spcil_res->fetch_assoc();
-        $spcil_name = $spcil_array["sname"];
-        $nic = $row['docnic'];
-        $tele = $row['doctel'];
-
-        $error_1 = $_GET["error"];
-        $errorlist = array(
-            '1' => '<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Ya tengo una cuenta para esta dirección de correo electrónico</label>',
-            '2' => '<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">¡Error de conformación de contraseña! Reconfirmar contraseña</label>',
-            '3' => '<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;"></label>',
-            '4' => "",
-            '0' => '',
-
-        );
-
-        if ($error_1 != '4') {
-            echo '
-                    <div id="popup1" class="overlay">
+                        <!-- MODAL DE EDITAR INFORMACION DEL DOCTOR -->
+                     <!-- <div id="popup1" class="overlay">
                             <div class="popup">
                             <center>
                             
-                                <a class="close" href="doctors.php">&times;</a> 
+                                <a class="close" href="doctores.html">&times;</a> 
                                 <div style="display: flex;justify-content: center;">
                                 <div class="abc">
                                 <table width="80%" class="sub-table scrolldown add-doc-form-container" border="0">
                                 <tr>
-                                        <td class="label-td" colspan="2">' .
-                $errorlist[$error_1]
-                . '</td>
+                                        <td class="label-td" colspan="2">
+               </td>
                                     </tr>
                                     <tr>
                                         <td>
                                             <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">Editar Información de Doctor</p>
-                                        Doctor ID : ' . $id . ' (Auto Generado)<br><br>
+                                        Doctor ID :<br><br>
                                         </td>
                                     </tr>
                                     <tr>
@@ -501,7 +383,7 @@
                                     </tr>
                                     <tr>
                                         <td class="label-td" colspan="2">
-                                        <input type="email" name="email" class="input-text" placeholder="Email Address" value="' . $email . '" required><br>
+                                        <input type="email" name="email" class="input-text" placeholder="Email Address" value="" required><br>
                                         </td>
                                     </tr>
                                     <tr>
@@ -512,7 +394,7 @@
                                     </tr>
                                     <tr>
                                         <td class="label-td" colspan="2">
-                                            <input type="text" name="name" class="input-text" placeholder="Nombre Doctor" value="' . $name . '" required><br>
+                                            <input type="text" name="name" class="input-text" placeholder="Nombre Doctor" value="" required><br>
                                         </td>
                                         
                                     </tr>
@@ -524,7 +406,7 @@
                                     </tr>
                                     <tr>
                                         <td class="label-td" colspan="2">
-                                            <input type="text" name="nic" class="input-text" placeholder="Número de Documento" value="' . $nic . '" required><br>
+                                            <input type="text" name="nic" class="input-text" placeholder="Número de Documento" value="" required><br>
                                         </td>
                                     </tr>
                                     <tr>
@@ -534,12 +416,12 @@
                                     </tr>
                                     <tr>
                                         <td class="label-td" colspan="2">
-                                            <input type="tel" name="Tele" class="input-text" placeholder="Teléfono Móvil" value="' . $tele . '" required><br>
+                                            <input type="tel" name="Tele" class="input-text" placeholder="Teléfono Móvil" value="" required><br>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="label-td" colspan="2">
-                                            <label for="spec" class="form-label">Escoger Especialidad: (Actualidad ' . $spcil_name . ')</label>
+                                            <label for="spec" class="form-label">Escoger Especialidad: </label>
                                             
                                         </td>
                                     </tr>
@@ -548,19 +430,7 @@
                                             <select name="spec" id="" class="box">';
 
 
-            $list11 = $database->query("select  * from  specialties;");
-
-            for ($y = 0; $y < $list11->num_rows; $y++) {
-                $row00 = $list11->fetch_assoc();
-                $sn = $row00["sname"];
-                $id00 = $row00["id"];
-                echo "<option value=" . $id00 . ">$sn</option><br/>";
-            };
-
-
-
-
-            echo     '       </select><br><br>
+                </select><br><br>
                                         </td>
                                     </tr>
                                     <tr>
@@ -601,34 +471,8 @@
                             </center>
                             <br><br>
                     </div>
-                    </div>
-                    ';
-        } else {
-            echo '
-                <div id="popup1" class="overlay">
-                        <div class="popup">
-                        <center>
-                        <br><br><br><br>
-                            <h2>Edición Exitosa</h2>
-                            <a class="close" href="doctors.php">&times;</a>
-                            <div class="content">
-                                
-                                
-                            </div>
-                            <div style="display: flex;justify-content: center;">
-                            
-                            <a href="doctors.php" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;&nbsp;OK&nbsp;&nbsp;</font></button></a>
-
-                            </div>
-                            <br><br>
-                        </center>
-                </div>
-                </div>
-    ';
-        };
-    };
-
-    ?>
+                    </div>  -->
+            
     </div>
 
 </body>
